@@ -1,0 +1,57 @@
+<html ng-app="myApp">
+<head>
+</head>
+<body ng-controller='basicController'>
+  <h3>Using xml2json in an angular factory</h3>
+  <p>Attempting to convert the following xml string</p>
+  <p>&lt;list&gt;&lt;item&gt;First&lt;/item&gt;&lt;item&gt;Second&lt;/item&gt;&lt;/list&gt;</p>
+  <div >
+    <p>Without Using angular.bind</p>
+    <input text ng-model="xmlstring1">
+    <button ng-click='convertXML(true)'>CONVERT XML</button>
+    <br>
+    {{result1}}
+  </div>
+  <div >
+    <p>Using angular bind</p>
+    <input text ng-model="xmlstring2">
+    <button ng-click='convertXML(false)'>CONVERT XML</button>
+    <br>
+    {{result2}}
+  </div>
+  </body>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.17/angular.min.js"></script>
+  <script type='text/javascript' 
+         src="https://x2js.googlecode.com/hg/xml2json.js"></script>
+  <script type="text/javascript">
+  angular.module('myApp', [])
+  .factory('xmlParser', function () {
+        var x2js = new X2JS();
+        return {
+            xml2json: x2js.xml2json,
+            xml_str2json_withOutBind : x2js.xml_str2json,
+            xml_str2json: function (args) {
+                return angular.bind(x2js, x2js.xml_str2json, args)();
+            },
+            json2xml: x2js.json2xml_str
+        }
+    })
+    .controller('basicController', function($scope, xmlParser) {
+      $scope.convertXML = function(_withOutBind) {
+        var string = "<list><item>First</item><item>Second</item></list>";
+
+        if (_withOutBind === true) {
+          try {
+            $scope.result1 = xmlParser.xml_str2json_withOutBind(string);
+          } catch(EE) {
+            alert(EE);
+            $scope.result1 = EE + "";
+          }
+
+        } else {
+          $scope.result2 = xmlParser.xml_str2json(string);
+        }
+      }
+    });
+  </script>
+</html>
