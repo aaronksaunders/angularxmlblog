@@ -22,7 +22,7 @@ angular.module('myApp', [])
   return {
     xml2json: x2js.xml2json,
     xml_str2json : x2js.xml_str2json,
-    json2xml: x2js.json2xml_str
+    json2xml_str: x2js.json2xml_str
   }
 })
 ```
@@ -39,11 +39,14 @@ angular.module('myApp', [])
 .factory('xmlParser', function () {
   var x2js = new X2JS();
   return {
-    xml2json: x2js.xml2json,
+    xml2json: function (args) {
+      return angular.bind(x2js, x2js.xml2json, args)();
+    },
     xml_str2json: function (args) {
       return angular.bind(x2js, x2js.xml_str2json, args)();
     },
-    json2xml: x2js.json2xml_str
-  }
+    json2xml_str: function (args) {
+      return angular.bind(x2js, x2js.json2xml_str, args)();
+    }
 })
 ```
